@@ -1,70 +1,47 @@
 pipeline {
-  agent any
-  stages {
-    stage('kubeconfig') {
-      steps {
-        sh 'echo coucou'
-      }
+    agent none
+    stages {
+        stage('Non-Sequential Stage') {
+            agent {
+                label 'for-non-sequential'
+            }
+            steps {
+                echo "On Non-Sequential Stage"
+            }
+        }
+        stage('Sequential') {
+            agent {
+                label 'for-sequential'
+            }
+            environment {
+                FOR_SEQUENTIAL = "some-value"
+            }
+            stages {
+                stage('In Sequential 1') {
+                    steps {
+                        echo "In Sequential 1"
+                    }
+                }
+                stage('In Sequential 2') {
+                    steps {
+                        echo "In Sequential 2"
+                    }
+                }
+                stage('Parallel In Sequential') {
+                    parallel {
+                        stage('In Parallel 1') {
+                            steps {
+                                echo "In Parallel 1"
+                            }
+                        }
+                        stage('In Parallel 2') {
+                            steps {
+                                echo "In Parallel 2"
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
-
-    stage('Test Connection') {
-      steps {
-        sh 'echo coucou'
-      }
-    }
-
-    stage('kube2iam ') {
-      parallel {
-        stage('kube2iam ') {
-          steps {
-            sh 'echo coucou'
-          }
-        }
-
-        stage('storage-class') {
-          steps {
-            sh 'echo coucou'
-          }
-        }
-
-        stage('kured') {
-          steps {
-            sh 'echo coucou'
-          }
-        }
-
-        stage('filebeat') {
-          steps {
-            sh 'echo coucou'
-          }
-        }
-
-        stage('metrics-server') {
-          steps {
-            sh 'echo coucou'
-          }
-        }
-
-        stage('Velero bucket') {
-          steps {
-            sh 'echo coucou'
-          }
-        }
-
-        stage('grafana operator') {
-          steps {
-            sh 'echo coucou'
-          }
-        }
-
-        stage('jaeger operator') {
-          steps {
-            sh 'echo coucou'
-          }
-        }
-
-      }
-    }
-
-  }
 }
